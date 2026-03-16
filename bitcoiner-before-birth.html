@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitcoiner Before Birth</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #111118;
+            --bg-card: #16161f;
+            --bg-card-hover: #1c1c28;
+            --bitcoin-orange: #f7931a;
+            --bitcoin-gold: #ffb347;
+            --bitcoin-light: #ffd993;
+            --text-primary: #e8e8ef;
+            --text-secondary: #9191a8;
+            --text-muted: #5c5c72;
+            --accent-blue: #4a9eff;
+            --accent-green: #34d399;
+            --accent-purple: #a78bfa;
+            --border: rgba(255,255,255,0.06);
+            --glow-orange: rgba(247,147,26,0.15);
+            --glow-blue: rgba(74,158,255,0.1);
+        }
+
+        html { scroll-behavior: smooth; scroll-snap-type: y mandatory; overflow-y: scroll; }
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* ===== CURSOR LIGHT ===== */
+        .cursor-light {
+            position: fixed;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(247,147,26,0.08) 0%, rgba(247,147,26,0.03) 35%, transparent 70%);
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, opacity 0.3s;
+            opacity: 0;
+        }
+        .cursor-light.active { opacity: 1; }
+        .cursor-dot {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--bitcoin-orange);
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px var(--bitcoin-orange), 0 0 20px rgba(247,147,26,0.3);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .cursor-dot.active { opacity: 1; }
+
+        /* ===== NAV ===== */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10,10,15,0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            transition: transform 0.4s;
+        }
+        .nav-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--bitcoin-orange);
+            letter-spacing: 1px;
+        }
+        .nav-logo span { color: var(--text-primary); font-weight: 400; }
+        .nav-links { display: flex; gap: 28px; align-items: center; }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+            cursor: none;
+        }
+        .nav-links a:hover { color: var(--bitcoin-orange); }
+        .nav-cta {
+            background: var(--bitcoin-orange) !important;
+            color: #000 !important;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600 !important;
+        }
+        .nav-cta:hover { background: var(--bitcoin-gold) !important; }
+
+        /* ===== PROGRESS BAR ===== */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--bitcoin-orange), var(--bitcoin-gold));
+            z-index: 101;
+            transition: width 0.15s;
+            box-shadow: 0 0 10px var(--bitcoin-orange);
+        }
+
+        /* ===== SLIDE SECTIONS ===== */
+        .slide {
+            min-height: 100vh;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 100px 60px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ===== HERO SLIDE ===== */
+        .hero { text-align: center; padding-top: 80px; }
+        .hero-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border: 1px solid rgba(247,147,26,0.3);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: var(--bitcoin-orange);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            background: rgba(247,147,26,0.05);
+        }
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.8rem, 6vw, 5.5rem);
+            line-height: 1.08;
+            margin-bottom: 24px;
+            font-weight: 700;
+        }
+        .hero h1 .orange { color: var(--bitcoin-orange); }
+        .hero h1 .light { color: var(--text-primary); font-weight: 400; }
+        .hero-sub {
+            font-size: clamp(1rem, 1.5vw, 1.2rem);
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+        }
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bitcoin-orange);
+            color: #000;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: none;
+            border: none;
+        }
+        .hero-cta:hover { background: var(--bitcoin-gold); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(247,147,26,0.3); }
+        .hero-scroll {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            animation: pulse-down 2s infinite;
+        }
+        @keyframes pulse-down {
+            0%, 100% { opacity: 0.4; transform: translateX(-50%) translateY(0); }
+            50% { opacity: 1; transform: translateX(-50%) translateY(8px); }
+        }
+
+        /* floating btc symbols */
+        .float-btc {
+            position: absolute;
+            font-family: 'JetBrains Mono', monospace;
+            color: rgba(247,147,26,0.06);
+            font-size: 4rem;
+            animation: float-up 15s infinite linear;
+            pointer-events: none;
+        }
+        @keyframes float-up {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* ===== SECTION HEADERS ===== */
+        .section-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.15;
+        }
+        .section-title .orange { color: var(--bitcoin-orange); }
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.7;
+            max-width: 650px;
+            margin-bottom: 50px;
+        }
+
+        /* ===== CARDS GRID ===== */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 32px 28px;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--bitcoin-orange), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .card:hover { background: var(--bg-card-hover); border-color: rgba(247,147,26,0.15); transform: translateY(-4px); }
+        .card:hover::before { opacity: 1; }
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 16px;
+            display: block;
+        }
+        .card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+        .card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.65;
+        }
+
+        /* ===== TASK TABLE ===== */
+        .tasks-container { overflow-x: auto; }
+        .phase-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .phase-tab {
+            padding: 10px 20px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: none;
+            transition: all 0.3s;
+        }
+        .phase-tab.active, .phase-tab:hover {
+            background: var(--bitcoin-orange);
+            color: #000;
+            border-color: var(--bitcoin-orange);
+        }
+        .tasks-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 6px;
+        }
+        .tasks-table th {
+            text-align: left;
+            padding: 12px 18px;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .tasks-table td {
+            padding: 14px 18px;
+            background: var(--bg-card);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .tasks-table tr td:first-child { border-left: 1px solid var(--border); border-radius: 8px 0 0 8px; color: var(--text-primary); font-weight: 500; }
+        .tasks-table tr td:last-child { border-right: 1px solid var(--border); border-radius: 0 8px 8px 0; }
+        .sats-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            background: rgba(247,147,26,0.1);
+            color: var(--bitcoin-orange);
+            border-radius: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .category-tag {
+            display: inline-block;
+            padding: 3px 10px;
+            background: rgba(74,158,255,0.08);
+            color: var(--accent-blue);
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
+
+        /* ===== REWARDS SLIDE ===== */
+        .rewards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+        .reward-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px 24px;
+            text-align: center;
+            transition: all 0.4s;
+            position: relative;
+        }
+        .reward-card:hover { border-color: rgba(247,147,26,0.2); transform: translateY(-4px); }
+        .reward-card.featured { border-color: var(--bitcoin-orange); background: linear-gradient(180deg, rgba(247,147,26,0.06), var(--bg-card)); }
+        .reward-card.featured::after { content: 'POPULAR'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--bitcoin-orange); color: #000; font-size: 0.65rem; font-weight: 700; padding: 3px 10px; border-radius: 10px; letter-spacing: 1px; }
+        .reward-emoji { font-size: 2.5rem; margin-bottom: 12px; display: block; }
+        .reward-name { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
+        .reward-amount { font-family: 'JetBrains Mono', monospace; color: var(--bitcoin-orange); font-size: 0.95rem; margin-bottom: 14px; font-weight: 500; }
+        .reward-desc { color: var(--text-secondary); font-size: 0.8rem; line-height: 1.6; }
+
+        /* ===== PROJECTION ===== */
+        .projection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+        .projection-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px;
+            transition: all 0.4s;
+        }
+        .projection-card:hover { border-color: rgba(247,147,26,0.15); }
+        .projection-card.highlight { background: linear-gradient(135deg, rgba(247,147,26,0.08), var(--bg-card)); border-color: var(--bitcoin-orange); }
+        .proj-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+        .proj-sats { font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; color: var(--bitcoin-orange); font-weight: 600; margin-bottom: 12px; }
+        .proj-values { display: flex; flex-direction: column; gap: 4px; }
+        .proj-val { font-size: 0.85rem; color: var(--text-secondary); }
+        .proj-val strong { color: var(--text-primary); }
+
+        /* ===== TIMELINE ===== */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 14px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--bitcoin-orange), var(--accent-blue), var(--accent-purple));
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 32px;
+            padding: 20px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        .timeline-item:hover { border-color: rgba(247,147,26,0.15); }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -33px;
+            top: 24px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--bitcoin-orange);
+            box-shadow: 0 0 10px rgba(247,147,26,0.5);
+        }
+        .timeline-step { font-size: 0.7rem; color: var(--bitcoin-orange); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+        .timeline-item h3 { font-size: 1.05rem; margin-bottom: 8px; }
+        .timeline-item p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
+
+        /* ===== CTA SLIDE ===== */
+        .cta-slide { text-align: center; }
+        .cta-slide .section-title { max-width: 700px; margin: 0 auto 20px; }
+        .cta-slide .section-desc { margin: 0 auto 40px; text-align: center; }
+        .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: none;
+            font-family: 'Space Grotesk', sans-serif;
+            border: none;
+        }
+        .cta-btn.primary { background: var(--bitcoin-orange); color: #000; }
+        .cta-btn.primary:hover { background: var(--bitcoin-gold); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(247,147,26,0.3); }
+        .cta-btn.secondary { background: transparent; color: var(--text-primary); border: 1px solid var(--border); }
+        .cta-btn.secondary:hover { border-color: var(--bitcoin-orange); color: var(--bitcoin-orange); }
+
+        /* ===== STATS ROW ===== */
+        .stats-row {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            margin: 50px 0;
+            flex-wrap: wrap;
+        }
+        .stat { text-align: center; }
+        .stat-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--bitcoin-orange);
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            padding: 40px 60px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .footer-logo { font-family: 'Playfair Display', serif; color: var(--bitcoin-orange); font-weight: 700; }
+        .footer-text { color: var(--text-muted); font-size: 0.8rem; }
+        .footer-links { display: flex; gap: 20px; }
+        .footer-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.8rem; transition: color 0.3s; cursor: none; }
+        .footer-links a:hover { color: var(--bitcoin-orange); }
+
+        /* ===== DOT NAV ===== */
+        .dot-nav {
+            position: fixed;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 90;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .dot-nav-item {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            border: none;
+            cursor: none;
+            transition: all 0.3s;
+            padding: 0;
+            position: relative;
+        }
+        .dot-nav-item.active { background: var(--bitcoin-orange); box-shadow: 0 0 10px rgba(247,147,26,0.5); transform: scale(1.4); }
+        .dot-nav-item:hover { background: var(--bitcoin-gold); }
+        .dot-nav-tooltip {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .dot-nav-item:hover .dot-nav-tooltip { opacity: 1; }
+
+        /* ===== ANIMATIONS ===== */
+        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s, transform 0.7s; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .slide { padding: 100px 24px 40px; }
+            .nav { padding: 16px 20px; }
+            .nav-links { display: none; }
+            .dot-nav { right: 10px; }
+            .hero h1 { font-size: 2.4rem; }
+            .stats-row { gap: 24px; }
+            .stat-num { font-size: 1.8rem; }
+            .footer { padding: 30px 24px; }
+            .cursor-light, .cursor-dot { display: none !important; }
+            body { cursor: auto; }
+            a, button { cursor: pointer; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Cursor light effect -->
+<div class="cursor-light" id="cursorLight"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- Progress bar -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- Navigation -->
+<nav class="nav" id="nav">
+    <div class="nav-logo">BBB <span>| Bitcoiner Before Birth</span></div>
+    <div class="nav-links">
+        <a href="#vision">Vision</a>
+        <a href="#how">How It Works</a>
+        <a href="#tasks">Tasks</a>
+        <a href="#rewards">Rewards</a>
+        <a href="#projection">Projection</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#support" class="nav-cta">Support on Geyser ₿</a>
+    </div>
+</nav>
+
+<!-- Dot navigation -->
+<div class="dot-nav" id="dotNav"></div>
+
+<!-- ========== SLIDE 1: HERO ========== -->
+<section class="slide hero" id="hero" data-name="Home">
+    <div class="float-btc" style="left:10%; animation-delay:0s;">₿</div>
+    <div class="float-btc" style="left:30%; animation-delay:3s;">₿</div>
+    <div class="float-btc" style="left:55%; animation-delay:7s;">₿</div>
+    <div class="float-btc" style="left:80%; animation-delay:11s;">₿</div>
+    <div class="float-btc" style="left:92%; animation-delay:5s;">₿</div>
+
+    <div class="slide-inner">
+        <div class="hero-badge reveal">GEYSER.FUND PROJECT — 2026</div>
+        <h1 class="reveal reveal-delay-1">
+            <span class="orange">Bitcoiner</span><br>
+            <span class="light">Before Birth</span>
+        </h1>
+        <p class="hero-sub reveal reveal-delay-2">
+            Your child's financial sovereignty starts before their first breath. 
+            A Lightning wallet, a community, and 18 years of stacking sats.
+        </p>
+        <a href="#support" class="hero-cta reveal reveal-delay-3">
+            <span>₿</span> Support This Project
+        </a>
+    </div>
+    <div class="hero-scroll">↓ Scroll</div>
+</section>
+
+<!-- ========== SLIDE 2: VISION ========== -->
+<section class="slide" id="vision" data-name="Vision">
+    <div class="slide-inner">
+        <div class="section-badge reveal">The Vision</div>
+        <h2 class="section-title reveal reveal-delay-1">
+            What if your child could start<br><span class="orange">stacking sats</span> from day zero?
+        </h2>
+        <p class="section-desc reveal reveal-delay-2">
+            Most children grow up with zero financial education and no savings built for them. 
+            Traditional savings lose to inflation. The future job market is uncertain. 
+            We're changing that — with Bitcoin.
+        </p>
+        <div class="cards-grid">
+            <div class="card reveal reveal-delay-1">
+                <span class="card-icon">⚡</span>
+                <h3>Lightning Wallet at Birth</h3>
+                <p>A non-custodial Lightning wallet created for your child, managed by the parent, ready to receive sats from day zero.</p>
+            </div>
+            <div class="card reveal reveal-delay-2">
+                <span class="card-icon">🌍</span>
+                <h3>Global Community Support</h3>
+                <p>The Bitcoin community worldwide can contribute sats that compound over a lifetime. Small donations today, life-changing wealth tomorrow.</p>
+            </div>
+            <div class="card reveal reveal-delay-3">
+                <span class="card-icon">🎮</span>
+                <h3>Gamified Education</h3>
+                <p>As the child grows, they earn sats by completing age-appropriate tasks — learning responsibility, discipline, and financial sovereignty.</p>
+            </div>
+            <div class="card reveal reveal-delay-4">
+                <span class="card-icon">🔐</span>
+                <h3>Self-Custody at 18</h3>
+                <p>When they turn 18, the child inherits a wallet built by community love and their own effort. True financial sovereignty begins.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== SLIDE 3: HOW IT WORKS ========== -->
+<section class="slide" id="how" data-name="How It Works">
+    <div class="slide-inner">
+        <div class="section-badge reveal">How It Works</div>
+        <h2 class="section-title reveal reveal-delay-1">
+            Simple. <span class="orange">Transparent.</span> Powerful.
+        </h2>
+        <p class="section-desc reveal reveal-delay-2">
+            No complicated setup. No custodial risks. Just a father, a wallet, and a community.
+        </p>
+        <div class="stats-row reveal reveal-delay-2">
+            <div class="stat">
+                <div class="stat-num" data-count="18">0</div>
+                <div class="stat-label">Years of Stacking</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num" data-count="30">0</div>
+                <div class="stat-label">Tasks Across Phases</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">0%</div>
+                <div class="stat-label">Custody by Third Parties</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">∞</div>
+                <div class="stat-label">Potential Growth</div>
+            </div>
+        </div>
+        <div class="cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+            <div class="card reveal reveal-delay-1" style="text-align:center;">
+                <span class="card-icon">1️⃣</span>
+                <h3>Create the Wallet</h3>
+                <p>Set up a non-custodial Lightning wallet (Phoenix, Breez, or Zeus) dedicated to the child.</p>
+            </div>
+            <div class="card reveal reveal-delay-2" style="text-align:center;">
+                <span class="card-icon">2️⃣</span>
+                <h3>Launch on Geyser</h3>
+                <p>Create the campaign, share the story, and open the wallet to receive community sats.</p>
+            </div>
+            <div class="card reveal reveal-delay-3" style="text-align:center;">
+                <span class="card-icon">3️⃣</span>
+                <h3>Earn Through Tasks</h3>
+                <p>As the child grows, they complete tasks and earn sats — building discipline and understanding value.</p>
+            </div>
+            <div class="card reveal reveal-delay-4" style="text-align:center;">
+                <span class="card-icon">4️⃣</span>
+                <h3>Inherit at 18</h3>
+                <p>Full self-custody transfer. The child becomes a sovereign individual with Bitcoin they earned and received.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== SLIDE 4: TASKS ========== -->
+<section class="slide" id="tasks" data-name="Tasks">
+    <div class="slide-inner">
+        <div class="section-badge reveal">Earn Your Sats</div>
+        <h2 class="section-title reveal reveal-delay-1">
+            Task-Reward <span class="orange">System</span>
+        </h2>
+        <p class="section-desc reveal reveal-delay-2">
+            From milestones to chores to life skills — every achievement is rewarded in sats.
+        </p>
+
+        <div class="phase-tabs reveal reveal-delay-2">
+            <button class="phase-tab active" onclick="showPhase(0)">Phase 1: 0–2 yrs</button>
+            <button class="phase-tab" onclick="showPhase(1)">Phase 2: 2–5 yrs</button>
+            <button class="phase-tab" onclick="showPhase(2)">Phase 3: 5–10 yrs</button>
+            <button class="phase-tab" onclick="showPhase(3)">Phase 4: 10–18 yrs</button>
+        </div>
+
+        <div class="tasks-container reveal reveal-delay-3">
+            <table class="tasks-table" id="tasksTable">
+                <thead>
+                    <tr>
+                        <th>Task / Milestone</th>
+                        <th>Age</th>
+                        <th>Reward</th>
+                        <th>Category</th>
+                    </tr>
+                </thead>
+                <tbody id="tasksBody"></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- ========== SLIDE 5: REWARDS ========== -->
+<section class="slide" id="rewards" data-name="Rewards">
+    <div class="slide-inner">
+        <div class="section-badge reveal">For Contributors</div>
+        <h2 class="section-title reveal reveal-delay-1">
+            Reward <span class="orange">Tiers</span>
+        </h2>
+        <p class="section-desc reveal reveal-delay-2">
+            Every contribution matters. Every contributor becomes part of this child's story.
+        </p>
+
+        <div class="rewards-grid reveal reveal-delay-3">
+            <div class="reward-card">
+                <span class="reward-emoji">🌱</span>
+                <div class="reward-name">Seed Planter</div>
+                <div class="reward-amount">1,000 sats</div>
+                <div class="reward-desc">Name on the public "Founders Wall" + thank you message</div>
+            </div>
+            <div class="reward-card">
+                <span class="reward-emoji">🧱</span>
+                <div class="reward-name">Block Builder</div>
+                <div class="reward-amount">10,000 sats</div>
+                <div class="reward-desc">+ Personalized digital certificate as an early supporter</div>
+            </div>
+            <div class="reward-card featured">
+                <span class="reward-emoji">⚡</span>
+                <div class="reward-name">Genesis Node</div>
+                <div class="reward-amount">50,000 sats</div>
+                <div class="reward-desc">+ Monthly progress updates on the sat-earning journey</div>
+            </div>
+            <div class="reward-card">
+                <span class="reward-emoji">🛡️</span>
+                <div class="reward-name">Satoshi Guardian</div>
+                <div class="reward-amount">100,000 sats</div>
+                <div class="reward-desc">+ Exclusive badge + name in the child's Bitcoin story book</div>
+            </div>
+            <div class="reward-card">
+                <span class="reward-emoji">🐋</span>
+                <div class="reward-name">Whale Patron</div>
+                <div class="reward-amount">500,000+ sats</div>
+                <div class="reward-desc">+ Video message from the family + co-naming a milestone task</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== SLIDE 6: PROJECTION ========== -->
+<section class="slide" id="projection" data-name="Projection">
+    <div class="slide-inner">
+        <div class="section-badge reveal">The Numbers</div>
+        <h2 class="section-title reveal reveal-delay-1">
+            Potential <span class="orange">Growth</span>
+        </h2>
+        <p class="section-desc reveal reveal-delay-2">
+            Speculative illustration, not financial advice. But it tells a powerful story 
+            about the potential of stacking sats over 18 years.
+        </p>
+
+        <div class="projection-grid reveal reveal-delay-3">
+            <div class="projection-card">
+                <div class="proj-label">Conservative</div>
+                <div class="proj-sats">500,000 sats</div>
+                <div class="proj-values">
+                    <div class="proj-val">At $100K/BTC: <strong>$500</strong></div>
+                    <div class="proj-val">At $1M/BTC: <strong>$5,000</strong></div>
+                </div>
+            </div>
+            <div class="projection-card">
+                <div class="proj-label">Moderate</div>
+                <div class="proj-sats">5,000,000 sats</div>
+                <div class="proj-values">
+                    <div class="proj-val">At $100K/BTC: <strong>$5,000</strong></div>
+                    <div class="proj-val">At $1M/BTC: <strong>$50,000</strong></div>
+                </div>
+            </div>
+            <div class="projection-card">
+                <div class="proj-label">Optimistic</div>
+                <div class="proj-sats">50,000,000 sats</div>
+                <div class="proj-values">
+                    <div class="proj-val">At $100K/BTC: <strong>$50,000</strong></div>
+                    <div class="proj-val">At $1M/BTC: <strong>$500,000</strong></div>
+                </div>
+            </div>
+            <div class="projection-card highlight">
+                <div class="proj-label">🚀 Viral / Community</div>
+                <div class="proj-sats">1+ BTC</div>
+                <div class="proj-values">
+                    <div class="proj-val">At $100K/BTC: <strong>$100,000</strong></div>
+                    <div class="proj-val">At $1M/BTC: <strong>$1,000,000</strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== SLIDE 7: ROADMAP ========== -->
+<section class="slide" id="roadmap" data-name="Roadmap">
+    <div class="slide-inner">
+        <div class="section-badge reveal">The Journey</div>
+        <h2 class="section-title reveal reveal-delay-1">
+            Campaign <span class="orange">Roadmap</span>
+        </h2>
+        <p class="section-desc reveal reveal-delay-2">
+            From the first ultrasound to the first self-custodial transfer.
+        </p>
+
+        <div class="timeline reveal reveal-delay-3">
+            <div class="timeline-item">
+                <div class="timeline-step">Pre-Launch</div>
+                <h3>Build the Community</h3>
+                <p>Share the story on Bitcoin Twitter, Nostr, and Telegram. Create teasers with ultrasound + Lightning QR overlay. Get 21+ Geyser Launchpad followers.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-step">Launch</div>
+                <h3>Go Live on Geyser</h3>
+                <p>Publish the campaign. Announce on all channels. Share the first ultrasound as the inaugural update. Ask early supporters to be the first contributors.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-step">Birth Day</div>
+                <h3>The Genesis Block</h3>
+                <p>Announce the birth. Share the first photo. This is the "genesis block" of your child's Bitcoin journey. Expect a wave of community support.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-step">Year 1–5</div>
+                <h3>Milestones & First Tasks</h3>
+                <p>Document milestones (first smile, first steps, first word). Introduce guided tasks. Post regular updates showing the growing wallet balance.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-step">Year 5–18</div>
+                <h3>The Long Stack</h3>
+                <p>Task complexity grows with the child. They begin understanding Bitcoin, running a node, teaching others. The wallet grows steadily.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-step">Year 18</div>
+                <h3>Self-Custody Transfer</h3>
+                <p>The ultimate milestone. Full ownership transfer. Your child becomes a sovereign Bitcoiner — with a wallet built by love, community, and effort.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== SLIDE 8: CTA ========== -->
+<section class="slide cta-slide" id="support" data-name="Support">
+    <div class="slide-inner">
+        <div class="section-badge reveal">Join Us</div>
+        <h2 class="section-title reveal reveal-delay-1">
+            Every sat is a <span class="orange">seed.</span><br>
+            Plant them early.
+        </h2>
+        <p class="section-desc reveal reveal-delay-2">
+            This is more than a crowdfunding campaign. It's an 18-year experiment in 
+            financial sovereignty, education, and community. Help a Bitcoiner start their 
+            journey before they're even born.
+        </p>
+        <div class="cta-buttons reveal reveal-delay-3">
+            <a href="https://geyser.fund" target="_blank" class="cta-btn primary">₿ Support on Geyser</a>
+            <a href="#hero" class="cta-btn secondary">↑ Back to Top</a>
+        </div>
+
+        <div class="stats-row reveal reveal-delay-4">
+            <div class="stat">
+                <div class="stat-num">₿</div>
+                <div class="stat-label">Non-Custodial</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">⚡</div>
+                <div class="stat-label">Lightning Native</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">🌍</div>
+                <div class="stat-label">Global Community</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">🔓</div>
+                <div class="stat-label">Open & Transparent</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-logo">Bitcoiner Before Birth</div>
+    <div class="footer-text">Stack Sats From Day Zero — 2026</div>
+    <div class="footer-links">
+        <a href="https://geyser.fund" target="_blank">Geyser</a>
+        <a href="#">Nostr</a>
+        <a href="#">Twitter/X</a>
+    </div>
+</footer>
+
+<script>
+// ===== TASKS DATA =====
+const phases = [
+    {
+        tasks: [
+            ["First ultrasound shared", "Pre-birth", "500", "Milestone"],
+            ["Birth announcement", "Day 0", "2,100", "Milestone"],
+            ["First smile captured", "~2 months", "1,000", "Milestone"],
+            ["First word documented", "~12 months", "2,100", "Milestone"],
+            ["First steps recorded", "~12 months", "2,100", "Milestone"],
+        ]
+    },
+    {
+        tasks: [
+            ["Put toys back in the box", "2+", "500", "Responsibility"],
+            ["Help water a plant", "2+", "500", "Nature"],
+            ["Say please & thank you all day", "3+", "300", "Social Skills"],
+            ["Draw a picture for someone", "3+", "500", "Creativity"],
+            ["Help set the table", "4+", "800", "Household"],
+            ["Learn to tie shoes", "4+", "1,500", "Life Skills"],
+            ["Identify 3 animals in nature", "3+", "500", "Learning"],
+            ["Share a toy with a friend", "3+", "500", "Social Skills"],
+        ]
+    },
+    {
+        tasks: [
+            ["Make bed every day (1 week)", "5+", "2,100", "Discipline"],
+            ["Read a book and summarize it", "6+", "3,000", "Education"],
+            ["Help cook a simple meal", "6+", "2,000", "Life Skills"],
+            ["Save sats for 30 days", "7+", "5,000", "Financial Ed"],
+            ["Explain Bitcoin to a friend", "8+", "5,000", "Bitcoin Ed"],
+            ["Complete a math challenge", "7+", "2,000", "Education"],
+            ["Organize their own room", "6+", "1,500", "Responsibility"],
+            ["Write a thank-you letter", "7+", "1,000", "Social Skills"],
+            ["Learn to check wallet balance", "8+", "3,000", "Bitcoin Ed"],
+            ["Plant and care for a seed (1 mo)", "6+", "5,000", "Patience"],
+        ]
+    },
+    {
+        tasks: [
+            ["Run a Lightning node with parent", "12+", "21,000", "Bitcoin Tech"],
+            ["Sell something for sats", "10+", "10,000", "Entrepreneurship"],
+            ["Teach a younger kid about BTC", "12+", "10,000", "Bitcoin Ed"],
+            ["Create a monthly budget (3 mo)", "13+", "15,000", "Financial Ed"],
+            ["Volunteer for a community cause", "12+", "10,000", "Social Impact"],
+            ["Build a simple website or app", "14+", "21,000", "Tech Skills"],
+            ["Read The Bitcoin Standard", "15+", "21,000", "Bitcoin Ed"],
+            ["Open a Nostr account, post", "13+", "5,000", "Digital Identity"],
+            ["First self-custodial transfer", "16+", "50,000", "Sovereignty"],
+        ]
+    }
+];
+
+function showPhase(idx) {
+    document.querySelectorAll('.phase-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+    const tbody = document.getElementById('tasksBody');
+    tbody.innerHTML = phases[idx].tasks.map(([task, age, sats, cat]) => `
+        <tr>
+            <td>${task}</td>
+            <td>${age}</td>
+            <td><span class="sats-badge">${sats} sats</span></td>
+            <td><span class="category-tag">${cat}</span></td>
+        </tr>
+    `).join('');
+}
+showPhase(0);
+
+// ===== CURSOR LIGHT =====
+const cursorLight = document.getElementById('cursorLight');
+const cursorDot = document.getElementById('cursorDot');
+let mouseX = 0, mouseY = 0, lightX = 0, lightY = 0;
+
+document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    cursorDot.style.left = mouseX + 'px';
+    cursorDot.style.top = mouseY + 'px';
+    cursorLight.classList.add('active');
+    cursorDot.classList.add('active');
+});
+
+document.addEventListener('mouseleave', () => {
+    cursorLight.classList.remove('active');
+    cursorDot.classList.remove('active');
+});
+
+function animateCursor() {
+    lightX += (mouseX - lightX) * 0.08;
+    lightY += (mouseY - lightY) * 0.08;
+    cursorLight.style.left = lightX + 'px';
+    cursorLight.style.top = lightY + 'px';
+    requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+// ===== SCROLL ANIMATIONS =====
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ===== PROGRESS BAR =====
+const progressBar = document.getElementById('progressBar');
+window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = (scrollTop / docHeight) * 100;
+    progressBar.style.width = progress + '%';
+});
+
+// ===== DOT NAVIGATION =====
+const slides = document.querySelectorAll('.slide');
+const dotNav = document.getElementById('dotNav');
+
+slides.forEach((slide, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'dot-nav-item';
+    const tooltip = document.createElement('span');
+    tooltip.className = 'dot-nav-tooltip';
+    tooltip.textContent = slide.dataset.name || `Slide ${i + 1}`;
+    btn.appendChild(tooltip);
+    btn.addEventListener('click', () => slide.scrollIntoView({ behavior: 'smooth' }));
+    dotNav.appendChild(btn);
+});
+
+const dotItems = document.querySelectorAll('.dot-nav-item');
+const slideObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const idx = Array.from(slides).indexOf(entry.target);
+            dotItems.forEach((d, i) => d.classList.toggle('active', i === idx));
+        }
+    });
+}, { threshold: 0.4 });
+
+slides.forEach(s => slideObserver.observe(s));
+
+// ===== COUNTER ANIMATION =====
+const countObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const el = entry.target;
+            const target = parseInt(el.dataset.count);
+            if (!target || el.dataset.done) return;
+            el.dataset.done = true;
+            let current = 0;
+            const step = Math.max(1, Math.floor(target / 40));
+            const interval = setInterval(() => {
+                current += step;
+                if (current >= target) { current = target; clearInterval(interval); }
+                el.textContent = current;
+            }, 30);
+        }
+    });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.stat-num[data-count]').forEach(el => countObserver.observe(el));
+</script>
+</body>
+</html>
